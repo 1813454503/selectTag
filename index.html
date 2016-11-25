@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        #box{
+            width:500px;
+            position:relative;
+            border:1px solid #000;
+            height:150px;
+            padding:1px;
+        }
+        #box div{
+            float:left;
+            padding:5px;
+            background:blue;
+            margin:3px;
+            border-radius:4px;
+            position:relative;
+            z-index: 7;
+        }
+        #box div span{
+            margin:3px;
+        }
+        #txt{
+            float:left;
+            width:150px;
+            height:35px;
+            border:none;
+            outline:none;
+            border-radius: 3px;
+        }
+        #list{
+            list-style:none;
+            width:500px;
+            border:1px solid #000;
+            margin-top:3px;
+        }
+        #list li{
+            margin-top:3px;
+            background:#ccc;
+            padding-left:5px;
+        }
+    </style>
+    <script src="jquery.js"></script>
+</head>
+<body>
+<div id="box">
+    <!--<div><span>111</span><a href="javacript:;">X</a></div>-->
+    <input type="text" id="txt" placeholder="add tags">
+</div>
+<ul id="list">
+    <!--<li></li>-->
+</ul>
+<script>
+    $(function(){
+        /**
+         * @description 简易
+         * */
+        /*$('#txt').keydown(function(e){
+            if(e.keyCode==13){
+                if($('#txt').val()!=''){
+                    $('<div><span>'+$('#txt').val()+'</span><a href="javacript:;">X</a></div>').prependTo($('#box'));
+                    $('#txt').val('');
+                }else{
+                    console.log('请输入文字');
+                }
+                return false;
+            }
+        });*/
+        /**
+         * description 设置焦点
+         * */
+
+        $('#box').click(function(){
+            $('#txt').focus();
+        });
+        /**
+         * description 删除功能
+         * */
+        $('#txt').keydown(function(e){
+            if($('#txt').val()==''&&e.keyCode==8){
+                $('#txt').prev().remove();
+            }
+        });
+
+        $('#box').on('click', 'div a', function () {
+            $(this).parent().remove();
+        });
+
+
+        /**
+         * description 创建列表功能
+         * */
+
+        let timer = null;
+        $('#txt').change(function(){
+            clearTimeout(timer);
+            timer=setTimeout(function(){
+                let _data=$('#txt').val();
+                let oUl=$('#list');
+                getData(oUl);
+
+            },200);
+        });
+        /**
+         * desciption 创建tag标签功能
+         * */
+        $('#list').on('click', 'li', function () {
+            $('<div><span>' + $(this).html() + '</span><a href="javacript:;">X</a></div>').prependTo($('#box'));
+            $('#txt').val('');
+        });
+
+        /**
+         * description 创建list函数
+         * */
+        function createList(data,obj){
+            obj.html('');
+            for(var i=0;i<data.length;i++){
+                $('<li>'+data[i].name+'</li>').appendTo(obj);
+            }
+        }
+        /**
+         * description 请求数据
+         * */
+
+        function getData(obj){
+            $.ajax({
+                type: "POST",
+                url: "abc.txt",
+                data: {},
+                success: function (str) {
+                    var data=eval(str);
+                    createList(data,obj)
+                },
+                error: function () {
+                }
+            });
+        }
+
+        /*var arr=[{name: 11, time: 11}, {name: 22, time: 22}, {name: 33, time: 33}];
+        createList(arr,$('#list'));*/
+    });
+</script>
+</body>
+</html>
